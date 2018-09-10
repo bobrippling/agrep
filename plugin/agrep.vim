@@ -147,9 +147,6 @@ endfunc
 func! s:set_window(title)
     let base_win = winnr()
     if !buflisted('Agrep')
-        if g:agrep_results_win_sp_mod == ''
-            let t:results_win_id = win_getid()
-        endif
 	exe g:agrep_win_sp_mod 'new Agrep'
 	let s:bufnr = bufnr('%')
 	setlocal buftype=nofile bufhidden=hide noswapfile
@@ -175,9 +172,6 @@ func! s:open_window()
     if winnr > 0
 	exe winnr 'wincmd w'
     elseif exists('s:bufnr')
-        if g:agrep_results_win_sp_mod == ''
-            let t:results_win_id = win_getid()
-        endif
 	exe g:agrep_win_sp_mod 'new +' . s:bufnr . 'b'
         call s:set_win_local_options()
     endif
@@ -231,11 +225,41 @@ func! s:get_file()
     return matchstr(getbufline(s:bufnr, lnum)[0], '^!\d\+!\zs.*\ze:$')
 endfunc
 
+func! s:get_edit_window()
+	let edit_win = win_getid()
+
+	if winbufnr(edit_win) == s:bufnr
+		wincmd p
+		let edit_win = win_getid()
+		wincmd p
+
+		if winbufnr(edit_win) == s:bufnr && winnr("$") > 1
+			" need to find another window
+			for i in range(winnr("$"), 1, -1)
+				if winbufnr(i) != s:bufnr
+					let edit_win = i
+					break
+				endif
+			endfor
+		endif
+
+		if winbufnr(edit_win) == s:bufnr
+			above new
+			let edit_win = win_getid()
+			wincmd p
+		endif
+	endif
+
+	return edit_win
+endfunction
+
 func! s:goto_match(d, count, file)
     let s:m_lnum -= 1
     if !s:goto_symbol('-', 1)
 	return
     endif
+
+    let orig_win = s:get_edit_window()
 
     if a:d " relative location
 	let a_count = a:count
@@ -290,14 +314,8 @@ func! s:goto_match(d, count, file)
 	call s:hl_cur_match(s:m_lnum, match.m_col, match.len)
         wincmd p
     endif
-    if !(exists('t:results_win_id') && win_gotoid(t:results_win_id))
-        if g:agrep_results_win_sp_mod != ''
-            exe g:agrep_results_win_sp_mod 'new'
-        elseif winnr() == agrep_winnr
-            new
-        endif
-        let t:results_win_id = win_getid()
-    endif
+
+    call win_gotoid(orig_win)
 
     let file = s:get_file()
     let file = (file[0] == '/' ? file : s:cwd . '/' . file)
