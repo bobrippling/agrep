@@ -39,6 +39,10 @@ command! -nargs=* -bang Affilter  call s:filer_results(<bang>0, <q-args>, 1)
 command! -count=1 Anewer  call s:history_get( 1, <count>)
 command! -count=1 Aolder  call s:history_get(-1, <count>)
 
+" Shortened aliases which remove ambiguity
+command! -count=1 An Anext
+command! -count=1 Ap Aprev
+
 let s:grep_cmd = 'export GREP_COLORS="mt=01:sl=:fn=:ln=:se=";
 		\ grep --color=always --line-buffered -nH'
 
