@@ -61,11 +61,11 @@ Commands						*Agrep-commands*
 The following standard commands are available. These commands are similar to
 the corresponding quickfix commands (cn, cp, etc.):
 
-							*:Anext*
-:[count]Anext		Display the [count] next match.
+							*:Anext* *:An*
+:[count]An[ext]		Display the [count] next match.
 
-							*:Aprev*
-:[count]Aprev		Display the [count] previous match.
+							*:Aprev* *:Ap*
+:[count]Ap[rev]		Display the [count] previous match.
 
 							*:Anfile*
 :[count]Anfile		Display the first match in the [count] next file.
