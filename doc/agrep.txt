@@ -132,6 +132,11 @@ g:agrep_default_flags	Sets the default flags to use with the grep command.
 g:agrep_history		Sets the number of history entries (searches) to save.
 			Default: 5.
 
+							*agrep_cmd*
+g:agrep_cmd		Sets the grep command to use for searching.
+			Default: not set (use agrep's internal default).
+
+
 If you want to set some options for the Agrep window only, you can use
 'Agrep' as the autocommands pattern. For example:
 

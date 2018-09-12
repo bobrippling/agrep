@@ -43,7 +43,7 @@ command! -count=1 Aolder  call s:history_get(-1, <count>)
 command! -count=1 An Anext
 command! -count=1 Ap Aprev
 
-let s:grep_cmd = 'export GREP_COLORS="mt=01:sl=:fn=:ln=:se=";
+let s:grep_cmd_default = 'export GREP_COLORS="mt=01:sl=:fn=:ln=:se=";
 		\ grep --color=always --line-buffered -nH'
 
 let s:status = ''
@@ -73,14 +73,16 @@ func! Agrep(args)
 	let s:exec_file = substitute(s:agrep_perl, 'perl/agrep.pl', '.exec_long_line.sh', '')
     endif
 
+    let chosen_grep_cmd = exists('g:agrep_cmd') ? g:agrep_cmd : s:grep_cmd_default
+
     if type(a:args) == type({})
         let s:regexp = a:args.regexp
         let flags = (get(a:args, 'use_defaults', 1) ? g:agrep_default_flags : '') . ' ' . get(a:args, 'flags', '')
-        let grep_cmd = s:grep_cmd . ' ' . flags . ' ' . a:args.regexp . ' ' . join(a:args.files) . ' 2>&1 | ' . s:agrep_perl
+        let grep_cmd = chosen_grep_cmd . ' ' . flags . ' ' . a:args.regexp . ' ' . join(a:args.files) . ' 2>&1 | ' . s:agrep_perl
         let title = get(a:args, 'title', 'grep ' . flags . ' ' . a:args.regexp)
     else
         let s:regexp    = matchstr(a:args, '\v^(-\S+\s*)*\zs(".*"|''.*''|\S*)')
-        let grep_cmd = s:grep_cmd . ' ' . g:agrep_default_flags . ' ' . a:args . ' 2>&1 | ' . s:agrep_perl
+        let grep_cmd = chosen_grep_cmd . ' ' . g:agrep_default_flags . ' ' . a:args . ' 2>&1 | ' . s:agrep_perl
         let title = 'grep ' . g:agrep_default_flags . ' ' . a:args
     endif
     call s:set_window(title . ':')
