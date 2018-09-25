@@ -79,12 +79,12 @@ func! Agrep(args)
         let s:regexp = a:args.regexp
         let flags = (get(a:args, 'use_defaults', 1) ? g:agrep_default_flags : '') . ' ' . get(a:args, 'flags', '')
         let grep_cmd = chosen_grep_cmd . ' ' . flags . ' ' . a:args.regexp . ' ' . join(a:args.files) . ' 2>&1 | ' . s:agrep_perl
-        let title = get(a:args, 'title', 'grep ' . flags . ' ' . a:args.regexp)
     else
         let s:regexp    = matchstr(a:args, '\v^(-\S+\s*)*\zs(".*"|''.*''|\S*)')
         let grep_cmd = chosen_grep_cmd . ' ' . g:agrep_default_flags . ' ' . a:args . ' 2>&1 | ' . s:agrep_perl
-        let title = 'grep ' . g:agrep_default_flags . ' ' . a:args
     endif
+
+    let title = grep_cmd
     call s:set_window(title . ':')
 
     if len(grep_cmd) > 400 "?
