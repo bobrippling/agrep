@@ -1,3 +1,6 @@
+:warning: Unmaintained. See [vim-bg](https://github.com/bobrippling/vim-bg) instead.
+
+
 #Agrep
 ###Asynchronous grep plugin for Vim
 
